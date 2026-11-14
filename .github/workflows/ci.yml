@@ -1,0 +1,35 @@
+# ffp: FFP-CI-FAERY-FORTRESS content-pipeline yaml
+name: Faery Fortress Tier-2 Enclave Gate
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  contents: read
+
+jobs:
+  enclave-verify:
+    name: SecretShield, C/AVX2 SIMD Build & Capability Audit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dhūmāvatī SecretShield & Zero-Scraper Check
+        run: |
+          python3 security/secret_shield.py
+          ! grep -rnE "(mailto:|@rasaxmachina\.com|\+372|sk_live_|ghp_[A-Za-z0-9]{20})" src/ nix/ README.md SECURITY.md
+      - name: Compile C/AVX2 MANAS Safety Kernel
+        run: |
+          gcc -O3 -mavx2 -mfma -shared -fPIC src/manas/tx_manas_cpu.c -o /tmp/libtx_manas_cpu.so -lm
+          ls -lh /tmp/libtx_manas_cpu.so
+      - name: Verify Python MANAS Daemon Syntax
+        run: |
+          python3 -m py_compile src/daemon/tx_manas.py security/secret_shield.py
